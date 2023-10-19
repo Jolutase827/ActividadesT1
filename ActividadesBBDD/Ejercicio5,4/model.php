@@ -24,10 +24,11 @@
     class Clientes{
         static function getAllClientes($con){
             try{
-                $result = $con->prepare('SELECT dniClietes, nombre FROM clientes');
+                $result = $con->prepare('SELECT dniCliente, nombre FROM clientes');
                 $result->execute();
                 return $result;
             }catch(PDOException $e){
+                echo $e->getMessage();
                 return false;
             }
         }
@@ -41,6 +42,7 @@
                 $result->execute();
                 return $result;
             }catch(PDOException $e){
+                echo $e->getMessage();
                 return false;
             }
         }
@@ -58,48 +60,77 @@
             $this->dniCliente = $dniCliente;
         }
 
-        static function isPedido($con, $idPedido){
+        function isPedido($con){
             try{
                 $result = $con->prepare('SELECT idPedido FROM pedidos WHERE idPedido = ?');
-                $result->bindParam(1, $idPedido);
+                $result->bindParam(1, $this->idPedido);
                 $result->execute();
-                $fila = $result->fetch(PDO::FETCH_ASSOC);
-                if($fila['$idPedido']!=''){
-                    return false;
+                
+                if($fila = $result->fetch(PDO::FETCH_ASSOC)){
+                    return true;
                 }
-                return true;
+                return false;
             }catch(PDOException $e){
+                echo $e->getMessage();
                 return false;
             }
         }
 
         function createPedido($con){
             try{
-                $query = 'INSERT INTO pedidos(idPedido,fecha,idCliente) VALUES(?,?,?)';
+                $query = 'INSERT INTO pedidos(idPedido,fecha,dniCliente,dirEntrega) VALUES(?,?,?,"")';
                 $pstmt = $con->prepare($query);
                 $pstmt->bindParam(1, $this->idPedido);
                 $pstmt->bindParam(2, $this->fecha);
                 $pstmt->bindParam(3, $this->dniCliente);
                 return $pstmt->execute();
             }catch(PDOException $e){
+                echo $e->getMessage();
                 return false;
             }
         }
 
         function addLinea($con,$idProducto,$cantidad){
             try{
-                $query = 'SELECT max(nlinea) FROM lineaspedidos';
-                $query = 'INSERT INTO lineaspedidos(idPedido,nlinea,idProducto,cantidad) VALUES(?,?,?,?)';
-                $stmt = $con->prepare( $query );
+                $query = "SELECT max(nlinea) as linea FROM lineaspedidos WHERE idPedido = ?";
+                $stmt = $con->prepare($query);
                 $stmt->bindParam(1, $this->idPedido);
-                $stmt->bindParam(2, $cantidad);
+                $stmt->execute();
+                if($data = $stmt->fetch(PDO::FETCH_ASSOC)){
+                    $nlinea = $data["linea"]+1;
+                }else{
+                    $nlinea = 1;
+                }
+                $query = 'INSERT INTO lineaspedidos(idPedido,nlinea,idProducto,cantidad) VALUES(?,?,?,?)';
+                $stmt = $con->prepare($query);
+                $stmt->bindParam(1, $this->idPedido);
+                $stmt->bindParam(2, $nlinea);
                 $stmt->bindParam(3, $idProducto);
-                $stmt->bindParam(4, $this->dniCliente);
+                $stmt->bindParam(4,$cantidad);
                 return $stmt->execute();
             }catch(PDOException $e){
+                echo $e->getMessage();
                 return false;
             }
         }
+    }
+
+
+    function customersList($result){
+        echo '<select name="cliente">';
+        while($fila = $result->fetch(PDO::FETCH_ASSOC)){
+            echo'<option value="'.$fila["dniCliente"].'"/>'.$fila['nombre'].'</option>';
+    
+        }
+        echo '</select>';
+    }
+    function productList($result){
+        echo '<select name="producto">';
+        while($fila = $result->fetch(PDO::FETCH_ASSOC)){
+            echo'<option value="'.$fila["idProducto"].'"/>'.$fila['nombre'].'</option>';
+    
+        }
+        echo '</select>';
     }
 
 ?>
