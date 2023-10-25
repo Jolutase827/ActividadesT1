@@ -1,4 +1,5 @@
 <?php
+require "config/databaseconfig.php";
 class BaseDeDatos{
     private $link;
     public function __construct(){
@@ -8,6 +9,9 @@ class BaseDeDatos{
         }catch(PDOException $e){
             echo $e->getMessage();
         }
+    }
+    public function __get($name){
+        return $this->$name;
     }
 }
 ?>

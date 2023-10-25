@@ -10,8 +10,18 @@ class LineaPedido{
         $this->idProducto = $idProducto;
         $this->cantidad = $cantidad;
     }
-    public function insertLinea(){
-    
+    public function insertLinea($link){
+            $query = "INSERT INTO lineaspedidos(idPedido,nlinea,idProducto,cantidad) VALUES(:id,:nlinea,:idProducto,:cantidad)";
+            $ptstm = $link->prepare($query);
+            $ptstm->bindParam(":id", $this->idPedido);
+            $ptstm->bindParam(":nlinea", $this->nlinea);
+            $ptstm->bindParam(":idProducto", $this->idProducto);
+            $ptstm->bindParam(":cantidad", $this->cantidad);
+            $ptstm->execute();
+    }
+
+    public function save(){
+        array_push($_SESSION['lineas'],$this);
     }
 }
 

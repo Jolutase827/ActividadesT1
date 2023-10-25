@@ -11,19 +11,18 @@ class Pedido{
     }
 
     public function insertPedido($link){
-        try{
         $query = "INSERT INTO pedidos(idPedido,fecha,dniCliente,dirEntrega) VALUES(?,?,?,'')";
         $ptstm = $link->prepare($query);
         $ptstm->bindParam(1, $this->idPedido);
         $ptstm->bindParam(2, $this->fecha);
         $ptstm->bindParam(3, $this->dniCliente);
         $ptstm->execute();
-        }catch(PDOException $e){
-            echo $e->getMessage();
-        }
     }
     public function save(){
-        $_SESSION['pedidos']= $this;
+        $_SESSION['pedido'] = $this;
+    }
+    public function __get($name){
+        return $this->$name;
     }
 }
 
