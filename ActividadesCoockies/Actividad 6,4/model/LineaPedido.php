@@ -21,8 +21,10 @@ class LineaPedido{
     }
 
     public function save(){
-        array_push($_SESSION['lineas'],$this);
+        $_SESSION['lineas'][$this->nlinea] = [$this->idPedido,$this->nlinea, $this->idProducto, $this->cantidad];
+    }
+    public function __get($name) {
+        return $this->$name;
     }
 }
-
 ?>

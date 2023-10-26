@@ -13,15 +13,14 @@
     }
     function createTable($idPedido){
         $nlinea = 1;
-        
         echo"";
         if(isset($_SESSION["lineas"])){
-            foreach ($_SESSION['lineas'] as  $linea) {
+            foreach ($_SESSION['lineas'] as  $indice => $linea) {
                 echo "<tr>
-                    <td>$linea->idPedido</td>
-                    <td>$linea->nlinea</td>
-                    <td>$linea->idProducto</td>
-                    <td>$linea->cantidad</td>
+                    <td>".$linea[0]."</td>
+                    <td>".$linea[1]."</td>
+                    <td>".$linea[2]."</td>
+                    <td>".$linea[3]."</td>
                     <td></td>
                 </tr>";
                 $nlinea++;

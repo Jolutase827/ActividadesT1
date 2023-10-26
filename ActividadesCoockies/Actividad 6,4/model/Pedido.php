@@ -19,7 +19,9 @@ class Pedido{
         $ptstm->execute();
     }
     public function save(){
-        $_SESSION['pedido'] = $this;
+        $_SESSION['idPedido'] = $this->idPedido;
+        $_SESSION['fecha'] = $this->fecha;
+        $_SESSION['dniCliente'] = $this->dniCliente;
     }
     public function __get($name){
         return $this->$name;
